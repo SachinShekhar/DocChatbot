@@ -6,6 +6,7 @@ export default function App() {
   const [file, setFile] = useState();
   const [fileId, setFileId] = useState();
   const [filename, setFilename] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const onReset = () => {
     setFileId(undefined);
@@ -17,6 +18,7 @@ export default function App() {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    setIsLoading(true);
 
     const formData = new FormData();
 
@@ -30,6 +32,7 @@ export default function App() {
     })
       .then((response) => response.json())
       .then((data) => {
+        setIsLoading(false);
         if (data.file_id === 'File type not supported') {
           alert('File type not supported');
           return;
@@ -42,6 +45,7 @@ export default function App() {
         }
       })
       .catch((error) => {
+        setIsLoading(false);
         console.error('Error', error);
       });
   };
@@ -69,7 +73,7 @@ export default function App() {
               type='submit'
               disabled={!file}
             >
-              Start Chat
+              <div className={isLoading ? 'animate-spin' : ''}>Start Chat</div>
             </button>
           </form>
         </div>
