@@ -2,15 +2,11 @@ import React from 'react';
 import { useState } from 'react';
 // import "./App.css";
 
-export default function Chat({
-  fileId,
-  filename,
-}: {
-  fileId: string;
-  filename: string;
-}) {
-  const [result, setResult] = useState();
-  const [question, setQuestion] = useState();
+export default function Chat({ fileId }: { fileId: string }) {
+  const [question, setQuestion] = useState('');
+  const [qaChain, setQaChain] = useState<{ author: string; message: string }[]>(
+    []
+  );
 
   const handleQuestionChange = (event: any) => {
     setQuestion(event.target.value);
@@ -18,46 +14,66 @@ export default function Chat({
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
-
-    const formData = new FormData();
-    if (question) {
-      formData.append('question', question);
-    }
+    const query = question;
+    setQuestion('');
+    setQaChain((oldQaChain) => [
+      ...oldQaChain,
+      { author: 'user', message: query },
+    ]);
 
     fetch('http://127.0.0.1:8000/predict', {
       method: 'POST',
-      body: formData,
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+      },
+      body: JSON.stringify({
+        file_id: fileId,
+        query,
+      }),
     })
       .then((response) => response.json())
       .then((data) => {
-        setResult(data.result);
+        setQaChain((oldQaChain) => [
+          ...oldQaChain,
+          { author: 'chatbot', message: data.result },
+        ]);
       })
       .catch((error) => {
+        alert('Something went wrong. Please try again.');
         console.error('Error', error);
       });
   };
 
   return (
     <div className='appBlock'>
-      <div>Chat with {filename}</div>
+      <div>
+        {qaChain.map((m) => {
+          return (
+            <div key={m.message}>
+              <div>{m.author + ':'}</div>
+              <div>{m.message}</div>
+              <br></br>
+            </div>
+          );
+        })}
+      </div>
       <form onSubmit={handleSubmit} className='form'>
-        <label className='questionLabel' htmlFor='question'>
-          Question:
-        </label>
         <input
-          className='questionInput'
+          className='questionInput border-spacing-1'
           id='question'
           type='text'
           value={question}
           onChange={handleQuestionChange}
           placeholder='Ask your question here'
         />
-        <br></br>
-        <button className='submitBtn' type='submit' disabled={!question}>
+        <button
+          className='submitBtn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ml-2'
+          type='submit'
+          disabled={!question}
+        >
           Submit
         </button>
       </form>
-      <p className='resultOutput'>Result: {result}</p>
     </div>
   );
 }

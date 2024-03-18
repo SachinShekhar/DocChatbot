@@ -48,7 +48,7 @@ export default function App() {
 
   return (
     <div className='pl-4 pt-4'>
-      <div className='text-lg font-bold'>Doc Chatbot</div>
+      <div className='text-2xl font-bold'>Doc Chatbot</div>
       {!fileId && (
         <div className='appBlock'>
           <form onSubmit={handleSubmit} className='form'>
@@ -64,7 +64,11 @@ export default function App() {
               className='fileInput'
             />
             <br></br>
-            <button className='submitBtn' type='submit' disabled={!file}>
+            <button
+              className='submitBtn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full mt-4'
+              type='submit'
+              disabled={!file}
+            >
               Start Chat
             </button>
           </form>
@@ -72,8 +76,16 @@ export default function App() {
       )}
       {fileId && (
         <div>
-          <button onClick={onReset}>Reset</button>
-          <Chat fileId={fileId} filename={filename} />
+          <div className='flex flex-row gap-4'>
+            <div>Chat with {filename}</div>
+            <button
+              className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-full'
+              onClick={onReset}
+            >
+              Reset
+            </button>
+          </div>
+          <Chat fileId={fileId} />
         </div>
       )}
     </div>
