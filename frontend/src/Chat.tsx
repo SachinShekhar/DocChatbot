@@ -23,7 +23,7 @@ export default function Chat({ fileId }: { fileId: string }) {
       { author: 'user', message: query },
     ]);
 
-    fetch('http://127.0.0.1:8000/predict', {
+    fetch('https://doc-chatbot-5k7t35rzkq-uc.a.run.app/predict', {
       method: 'POST',
       headers: {
         'content-type': 'application/json;charset=UTF-8',

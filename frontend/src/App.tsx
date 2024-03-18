@@ -26,7 +26,7 @@ export default function App() {
       formData.append('file', file);
     }
 
-    fetch('http://127.0.0.1:8000/upload', {
+    fetch('https://doc-chatbot-5k7t35rzkq-uc.a.run.app/upload', {
       method: 'POST',
       body: formData,
     })
