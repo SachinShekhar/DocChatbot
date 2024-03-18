@@ -17,6 +17,7 @@ load_dotenv()
 
 class UploadResponse(BaseModel):
     file_id: str
+    filename: str
 
 class PredictRequest(BaseModel):
     file_id: str
@@ -28,7 +29,8 @@ class PredictResponse(BaseModel):
 origins = [
     "http://localhost",
     "http://localhost:8080",
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://localhost:3001"
 ]
 
 app = FastAPI()
@@ -50,12 +52,12 @@ def upload(file: UploadFile = File(...)) -> Any:
             new_file = f"{id}.{file_ext}"
             with open(new_file, "wb") as f:
                 f.write(contents)
-            return {"file_id": new_file}
+            return {"file_id": new_file, "filename": file.filename}
         else:
-            return {"file_id": 'File type not supported'}
+            return {"file_id": 'File type not supported', "filename": file.filename}
     except Exception as e:
         print(e)
-        return {"file_id": 'error'}
+        return {"file_id": 'error', "filename": file.filename}
     finally:
         file.file.close()
 
