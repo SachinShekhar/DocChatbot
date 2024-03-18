@@ -7,6 +7,7 @@ export default function Chat({ fileId }: { fileId: string }) {
   const [qaChain, setQaChain] = useState<{ author: string; message: string }[]>(
     []
   );
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleQuestionChange = (event: any) => {
     setQuestion(event.target.value);
@@ -14,6 +15,7 @@ export default function Chat({ fileId }: { fileId: string }) {
 
   const handleSubmit = (event: any) => {
     event.preventDefault();
+    setIsLoading(true);
     const query = question;
     setQuestion('');
     setQaChain((oldQaChain) => [
@@ -37,10 +39,12 @@ export default function Chat({ fileId }: { fileId: string }) {
           ...oldQaChain,
           { author: 'chatbot', message: data.result },
         ]);
+        setIsLoading(false);
       })
       .catch((error) => {
         alert('Something went wrong. Please try again.');
         console.error('Error', error);
+        setIsLoading(false);
       });
   };
 
@@ -71,7 +75,7 @@ export default function Chat({ fileId }: { fileId: string }) {
           type='submit'
           disabled={!question}
         >
-          Submit
+          <div className={isLoading ? 'animate-spin' : ''}>Send</div>
         </button>
       </form>
     </div>
